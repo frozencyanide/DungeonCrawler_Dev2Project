@@ -1,58 +1,77 @@
-using System.Xml.Serialization;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class gameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    [SerializeField] GameObject ActiveMenu;
-    [SerializeField] GameObject PauseMenu;
-    [SerializeField] GameObject LossScreen;
-    [SerializeField] GameObject VictoryScreen;
+    public static GameManager instance;
 
-    public bool isPaused;
+    [Header("Menus")]
+    [SerializeField] private GameObject ActiveMenu;
+    [SerializeField] private GameObject PauseMenu;
+    [SerializeField] private GameObject LossScreen;
+    [SerializeField] private GameObject VictoryScreen;
+
+    [Header("Player Reference")]
     public GameObject player;
-    public playerController pController;
+    public PlayerController pController;
 
-    float timeScaleOriginal;
+    [Header("UI")]
+    public Image playerHPBar;               // Drag the fill Image here in Inspector
 
-    int goalCount;
+    public bool isPaused { get; private set; }
 
-    public static gameManager instance;
+    private float timeScaleOriginal;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Win Condition")]
+    private List<Enemy> activeEnemies = new List<Enemy>();
+    private int initialEnemyCount;
+
     void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
-        timeScaleOriginal = Time.timeScale;
-
-        player = GameObject.FindWithTag("Player");
-        pController = player.GetComponent<playerController>();
     }
 
-    // Update is called once per frame
+    void Start()
+    {
+        timeScaleOriginal = Time.timeScale;
+
+        if (player == null)
+        {
+            player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                pController = player.GetComponent<PlayerController>();
+            }
+        }
+    }
+
     void Update()
     {
         if (Input.GetButtonDown("Cancel"))
         {
-
-            if (ActiveMenu = null)
+            if (ActiveMenu == null)
             {
                 PauseGame();
                 ActiveMenu = PauseMenu;
-                ActiveMenu.SetActive(true);
+                if (ActiveMenu != null) ActiveMenu.SetActive(true);
             }
             else
             {
                 UnpauseGame();
             }
         }
-
     }
-        
 
     public void PauseGame()
     {
         isPaused = true;
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -63,17 +82,48 @@ public class gameManager : MonoBehaviour
         Time.timeScale = timeScaleOriginal;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        
-        ActiveMenu.SetActive(false);
-        ActiveMenu = null;
+
+        if (ActiveMenu != null)
+        {
+            ActiveMenu.SetActive(false);
+            ActiveMenu = null;
+        }
     }
 
     public void LostGame()
     {
         PauseGame();
         ActiveMenu = LossScreen;
-        ActiveMenu.SetActive(true);
+        if (ActiveMenu != null) ActiveMenu.SetActive(true);
     }
 
-   
+    public void RegisterEnemy(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        if (!activeEnemies.Contains(enemy))
+        {
+            activeEnemies.Add(enemy);
+            initialEnemyCount = activeEnemies.Count;
+        }
+    }
+
+    public void EnemyDied(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        activeEnemies.Remove(enemy);
+
+        if (activeEnemies.Count <= 0 && initialEnemyCount > 0)
+        {
+            VictoryGame();
+        }
+    }
+
+    public void VictoryGame()
+    {
+        PauseGame();
+        ActiveMenu = VictoryScreen;
+        if (ActiveMenu != null) ActiveMenu.SetActive(true);
+    }
 }

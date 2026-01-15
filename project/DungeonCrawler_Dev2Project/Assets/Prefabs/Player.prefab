@@ -61,7 +61,7 @@ MonoBehaviour:
   gravity: 15
   shootDamage: 0
   shootDist: 0
-  shootRate: 0
+  shootRate: 50
 --- !u!33 &2912106192394451962
 MeshFilter:
   m_ObjectHideFlags: 0
