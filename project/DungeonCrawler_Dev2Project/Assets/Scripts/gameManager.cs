@@ -34,7 +34,7 @@ public class gameManager : MonoBehaviour
         if (Input.GetButtonDown("Cancel"))
         {
 
-            if (ActiveMenu = null)
+            if (ActiveMenu == null)
             {
                 PauseGame();
                 ActiveMenu = PauseMenu;

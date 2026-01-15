@@ -3,6 +3,7 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour, IDamage
 {
+   
     [SerializeField] Renderer model;
     [SerializeField] int HP;
 
