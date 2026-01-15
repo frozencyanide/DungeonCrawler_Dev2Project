@@ -7,10 +7,10 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [Header("Menus")]
-    [SerializeField] private GameObject ActiveMenu;
-    [SerializeField] private GameObject PauseMenu;
-    [SerializeField] private GameObject LossScreen;
-    [SerializeField] private GameObject VictoryScreen;
+    [SerializeField] GameObject ActiveMenu;
+    [SerializeField] GameObject PauseMenu;
+    [SerializeField] GameObject LossScreen;
+    [SerializeField] GameObject VictoryScreen;
 
     [Header("Player Reference")]
     public GameObject player;
@@ -21,11 +21,11 @@ public class GameManager : MonoBehaviour
 
     public bool isPaused { get; private set; }
 
-    private float timeScaleOriginal;
+    float timeScaleOriginal;
 
     [Header("Win Condition")]
-    private List<Enemy> activeEnemies = new List<Enemy>();
-    private int initialEnemyCount;
+    List<Enemy> activeEnemies = new List<Enemy>();
+    int initialEnemyCount;
 
     void Awake()
     {

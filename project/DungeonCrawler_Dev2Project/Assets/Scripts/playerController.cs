@@ -3,31 +3,31 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IDamage
 {
     [Header("----- Components -----")]
-    [SerializeField] private CharacterController controller;
-    [SerializeField] private LayerMask ignoreLayer;
+    [SerializeField] CharacterController controller;
+    [SerializeField] LayerMask ignoreLayer;
 
     [Header("----- Stats -----")]
-    [Range(1, 10)][SerializeField] private int HP = 5;
-    [Range(1, 10)][SerializeField] private int speed = 5;
-    [Range(2, 5)][SerializeField] private int sprintMod = 2;
-    [Range(8, 20)][SerializeField] private int jumpSpeed = 8;
-    [Range(1, 3)][SerializeField] private int jumpMax = 1;
+    [Range(1, 10)][SerializeField] int HP = 5;
+    [Range(1, 10)][SerializeField] int speed = 5;
+    [Range(2, 5)][SerializeField] int sprintMod = 2;
+    [Range(8, 20)][SerializeField] int jumpSpeed = 8;
+    [Range(1, 3)][SerializeField] int jumpMax = 1;
 
     [Header("----- Physics -----")]
-    [Range(15, 40)][SerializeField] private int gravity = 20;
+    [Range(15, 40)][SerializeField] int gravity = 20;
 
     [Header("----- Guns -----")]
-    [SerializeField] private int shootDamage = 1;
-    [SerializeField] private int shootDist = 50;
-    [SerializeField] private float shootRate = 0.25f;
+    [SerializeField] int shootDamage = 1;
+    [SerializeField] int shootDist = 50;
+    [SerializeField] float shootRate = 0.25f;
 
-    private int jumpCount;
-    private int HPOriginal;
-    private float shootTimer;
-    private Vector3 moveDir;
-    private Vector3 playerVel;
+    int jumpCount;
+    int HPOriginal;
+    float shootTimer;
+    Vector3 moveDir;
+    Vector3 playerVel;
 
-    private int baseSpeed;
+    int baseSpeed;
 
     void Start()
     {
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour, IDamage
         shootTimer += Time.deltaTime;
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                  (Input.GetAxis("Vertical") * transform.forward);
+                    (Input.GetAxis("Vertical") * transform.forward);
 
         controller.Move(moveDir * speed * Time.deltaTime);
 
@@ -93,10 +93,7 @@ public class PlayerController : MonoBehaviour, IDamage
 
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position,
-                           Camera.main.transform.forward,
-                           out hit,
-                           shootDist,
-                           ~ignoreLayer))
+                            Camera.main.transform.forward, out hit, shootDist, ~ignoreLayer))
         {
             Debug.Log("Hit: " + hit.collider.name);
 
