@@ -59,9 +59,9 @@ MonoBehaviour:
   jumpSpeed: 12
   jumpMax: 2
   gravity: 23
-  shootDamage: 0
-  shootDist: 0
-  shootRate: 50
+  shootDamage: 1
+  shootDist: 100
+  shootRate: 1.5
 --- !u!33 &2912106192394451962
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -317,8 +317,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e35d28a866f090a4f81c979fb73066c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::cameraController
-  sens: 0
-  lockVertMin: 0
-  lockVertMax: 0
+  sens: 300
+  lockVertMin: -90
+  lockVertMax: 90
   invertY: 0
   player: {fileID: 0}

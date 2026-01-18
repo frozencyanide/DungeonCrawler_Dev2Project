@@ -1,4 +1,6 @@
+using System.Threading;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour, IDamage
 {
@@ -40,7 +42,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (GameManager.instance != null && GameManager.instance.isPaused)
             return;
-
+        Debug.Log($"timer: {shootTimer}  rate: {shootRate}");
         movement();
         sprint();
     }
@@ -55,16 +57,17 @@ public class PlayerController : MonoBehaviour, IDamage
                     (Input.GetAxis("Vertical") * transform.forward);
 
         controller.Move(moveDir * speed * Time.deltaTime);
-
-        jump();
-
-        playerVel.y += gravity * Time.deltaTime * -1f;
         controller.Move(playerVel * Time.deltaTime);
+        jump();
 
         if (controller.isGrounded)
         {
             jumpCount = 0;
-            playerVel = Vector3.zero;
+            playerVel.y += gravity * Time.deltaTime * -1f;
+        }
+        else
+        {
+            playerVel.y -= gravity * Time.deltaTime;
         }
 
         if (Input.GetButton("Fire1") && shootTimer >= shootRate)
@@ -90,32 +93,18 @@ public class PlayerController : MonoBehaviour, IDamage
     void shoot()
     {
         shootTimer = 0f;
-
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position,
-                            Camera.main.transform.forward, out hit, shootDist, ~ignoreLayer))
+                            Camera.main.transform.forward,
+                            out hit,
+                            shootDist, ~ignoreLayer))
         {
             Debug.Log("Hit: " + hit.collider.name);
 
-            IDamage dmg = hit.collider.GetComponent<IDamage>();
+            IDamage dmg = hit.collider.GetComponentInParent<IDamage>();
             if (dmg != null)
             {
-                dmg.TakeDamage(shootDamage);
-            }
-        }
-    }
-
-    public void TakeDamage(int amount)
-    {
-        HP -= amount;
-        UpdatePlayerUI();
-
-        if (HP <= 0)
-        {
-            HP = 0;
-            if (GameManager.instance != null)
-            {
-                GameManager.instance.LostGame();
+                dmg.takeDamage(shootDamage);
             }
         }
     }
@@ -126,5 +115,29 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
         }
+    }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        UpdatePlayerUI();
+        StartCoroutine(flashDamage());
+
+        if (HP <= 0)
+        {
+            HP = 0;
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.LostGame();
+            }
+        }
+    }
+    IEnumerator flashDamage()
+    {
+        GameManager.instance.DamageFlash.SetActive(true);
+
+        yield return new WaitForSeconds(0.1f);
+
+        GameManager.instance.DamageFlash.SetActive(false);
     }
 }

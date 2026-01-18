@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour, IDamage
 
     void Update()
     {
-        if (GameManager.instance?.player == null) return;
+        if (GameManager.instance.player == null) return;
 
         playerDirection = GameManager.instance.player.transform.position - transform.position;
 
@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour, IDamage
         }
     }
 
-    public void TakeDamage(int amount)
+    public void takeDamage(int amount)
     {
         currentHealth -= amount;
         if (currentHealth <= 0)
