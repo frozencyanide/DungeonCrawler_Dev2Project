@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject PauseMenu;
     [SerializeField] GameObject LossScreen;
     [SerializeField] GameObject VictoryScreen;
+    public GameObject DamageFlash;
 
     [Header("Player Reference")]
     public GameObject player;
@@ -29,16 +30,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+     
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
         instance = this;
-    }
 
-    void Start()
-    {
         timeScaleOriginal = Time.timeScale;
 
         if (player == null)
@@ -49,10 +48,12 @@ public class GameManager : MonoBehaviour
                 pController = player.GetComponent<PlayerController>();
             }
         }
+
     }
 
     void Update()
     {
+     
         if (Input.GetButtonDown("Cancel"))
         {
             if (ActiveMenu == null)

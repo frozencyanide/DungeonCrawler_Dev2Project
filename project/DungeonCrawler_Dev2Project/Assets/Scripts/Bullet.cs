@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
         IDamage dmg = other.GetComponent<IDamage>();
         if (dmg != null)
         {
-            dmg.TakeDamage(damage);
+            dmg.takeDamage(damage);
             Destroy(gameObject);
         }
         else if (other.CompareTag("Wall") || other.CompareTag("Environment"))
