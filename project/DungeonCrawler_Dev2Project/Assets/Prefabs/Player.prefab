@@ -52,16 +52,16 @@ MonoBehaviour:
   controller: {fileID: 2890101452950189159}
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   HP: 10
   speed: 5
   sprintMod: 2
   jumpSpeed: 12
   jumpMax: 2
   gravity: 23
-  shootDamage: 1
-  shootDist: 100
-  shootRate: 1.5
+  shootDamage: 2
+  shootDist: 400
+  shootRate: 0.75
 --- !u!33 &2912106192394451962
 MeshFilter:
   m_ObjectHideFlags: 0

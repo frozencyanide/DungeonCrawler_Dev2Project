@@ -9,6 +9,8 @@ TagManager:
   - Environment
   - Wall
   - Enemy
+  - BigEnemy
+  - WinArea
   layers:
   - Default
   - TransparentFX

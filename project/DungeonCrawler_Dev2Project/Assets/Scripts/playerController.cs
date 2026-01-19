@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (GameManager.instance != null && GameManager.instance.isPaused)
             return;
-        Debug.Log($"timer: {shootTimer}  rate: {shootRate}");
+
         movement();
         sprint();
     }
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour, IDamage
         if (controller.isGrounded)
         {
             jumpCount = 0;
-            playerVel.y += gravity * Time.deltaTime * -1f;
+            playerVel.y = 0;
         }
         else
         {
@@ -97,10 +97,8 @@ public class PlayerController : MonoBehaviour, IDamage
         if (Physics.Raycast(Camera.main.transform.position,
                             Camera.main.transform.forward,
                             out hit,
-                            shootDist, ~ignoreLayer))
+                            shootDist, ~ignoreLayer, QueryTriggerInteraction.Ignore))
         {
-            Debug.Log("Hit: " + hit.collider.name);
-
             IDamage dmg = hit.collider.GetComponentInParent<IDamage>();
             if (dmg != null)
             {
@@ -113,7 +111,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         if (GameManager.instance != null && GameManager.instance.playerHPBar != null)
         {
-            GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
+           GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
         }
     }
 
@@ -121,7 +119,7 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         HP -= amount;
         UpdatePlayerUI();
-        StartCoroutine(flashDamage());
+        
 
         if (HP <= 0)
         {
@@ -130,6 +128,10 @@ public class PlayerController : MonoBehaviour, IDamage
             {
                 GameManager.instance.LostGame();
             }
+        }
+        else
+        {
+            StartCoroutine(flashDamage());
         }
     }
     IEnumerator flashDamage()
