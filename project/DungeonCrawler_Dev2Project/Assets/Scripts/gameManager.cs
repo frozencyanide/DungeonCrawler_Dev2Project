@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,14 +21,17 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     public Image playerHPBar;               // Drag the fill Image here in Inspector
-
     public bool isPaused { get; private set; }
-
     float timeScaleOriginal;
 
     [Header("Win Condition")]
-    List<Enemy> activeEnemies = new List<Enemy>();
+    public List<Enemy> activeEnemies = new List<Enemy>();
     int initialEnemyCount;
+    [SerializeField] TMP_Text GoalMissionText;
+    [SerializeField] TMP_Text GoalCountText;
+    public GameObject WinArea;
+    public GameObject BossDoor;
+    public GameObject VictoryDoor;
 
     void Awake()
     {
@@ -38,7 +43,18 @@ public class GameManager : MonoBehaviour
         }
         instance = this;
 
-        timeScaleOriginal = Time.timeScale;
+        if (WinArea == null)
+        {
+            WinArea = GameObject.FindWithTag("WinArea");
+        }
+        if (BossDoor == null)
+        {
+            BossDoor = GameObject.FindWithTag("Door1");
+        }
+        if (VictoryDoor == null)
+        {
+            VictoryDoor = GameObject.FindWithTag("Door2");
+        }
 
         if (player == null)
         {
@@ -49,6 +65,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
+       
+    }
+
+    private void Start()
+    {
+        Time.timeScale = 1f;
+        timeScaleOriginal = Time.timeScale;
     }
 
     void Update()
@@ -107,6 +130,7 @@ public class GameManager : MonoBehaviour
             activeEnemies.Add(enemy);
             initialEnemyCount = activeEnemies.Count;
         }
+        UpdateGoalCount();
     }
 
     public void EnemyDied(Enemy enemy)
@@ -114,17 +138,33 @@ public class GameManager : MonoBehaviour
         if (enemy == null) return;
 
         activeEnemies.Remove(enemy);
-
-        if (activeEnemies.Count <= 0 && initialEnemyCount > 0)
-        {
-            VictoryGame();
-        }
+        UpdateGoalCount();
+        
     }
 
     public void VictoryGame()
     {
         PauseGame();
         ActiveMenu = VictoryScreen;
-        if (ActiveMenu != null) ActiveMenu.SetActive(true);
+        if (ActiveMenu != null) { ActiveMenu.SetActive(true); }
+    }
+
+   public void UpdateGoalCount()
+    {
+        GoalCountText.text = activeEnemies.Count.ToString();
+
+        if (GoalCountText.text == "1" && initialEnemyCount != 1)
+        {
+            GoalMissionText.text = "Defeat the boss!";
+            
+            BossDoor.SetActive(false);
+        }
+
+        if (GoalCountText.text == "0")
+        {
+            GoalMissionText.text = "Get to the treasure room!";
+            GoalCountText.text = "";
+            VictoryDoor.SetActive(false);
+        }
     }
 }

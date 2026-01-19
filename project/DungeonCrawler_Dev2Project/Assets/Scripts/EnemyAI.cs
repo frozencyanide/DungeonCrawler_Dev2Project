@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour, IDamage
@@ -7,11 +8,14 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform shootPos;
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Material enemyMaterial;
+
 
     [Header("----- Stats -----")]
     [SerializeField] private float shootRate = 2f;
     [SerializeField] private int faceTargetSpeed = 5;
     [SerializeField] private int maxHealth = 10;
+    [SerializeField] private float sightDistance = 45f;
 
     [Header("----- Vision -----")]
     [SerializeField] private Transform headPos;           // Assign head position in Inspector
@@ -19,13 +23,11 @@ public class Enemy : MonoBehaviour, IDamage
 
     private float shootTimer;
     private Vector3 playerDirection;
-    private int currentHealth;
+    private float angleToPlayer;
     private bool playerInTrigger;
 
     void Start()
     {
-        currentHealth = maxHealth;
-
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -39,23 +41,11 @@ public class Enemy : MonoBehaviour, IDamage
     {
         if (GameManager.instance.player == null) return;
 
-        playerDirection = GameManager.instance.player.transform.position - transform.position;
-
-        agent.SetDestination(GameManager.instance.player.transform.position);
-
         shootTimer += Time.deltaTime;
-        if (shootTimer >= shootRate)
-        {
-            shootTimer = 0f;
-            if (shootPos != null && bulletPrefab != null)
-            {
-                Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
-            }
-        }
 
-        if (agent.remainingDistance <= agent.stoppingDistance)
+        if (playerInTrigger && CanSeePlayer())
         {
-            FaceTarget();
+
         }
     }
 
@@ -71,38 +61,61 @@ public class Enemy : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
-        currentHealth -= amount;
-        if (currentHealth <= 0)
+        maxHealth -= amount;
+        if (maxHealth <= 0)
         {
             if (GameManager.instance != null)
                 GameManager.instance.EnemyDied(this);
             Destroy(gameObject);
         }
+        else
+        {
+            StartCoroutine(FlashRed());
+        }
+
+
     }
 
-    private bool CanSeePlayer()
+    bool CanSeePlayer()
     {
-        if (headPos == null) return false;
+        playerDirection = GameManager.instance.player.transform.position - headPos.position;
+        angleToPlayer = Vector3.Angle(playerDirection, transform.forward);
+        Debug.DrawRay(headPos.position, playerDirection * sightDistance, Color.white);
 
-        Vector3 direction = GameManager.instance.player.transform.position - headPos.position;
-        Vector3 normDir = direction.normalized;
-
-        Debug.DrawRay(headPos.position, normDir * 20f, Color.white);
 
         RaycastHit hit;
-        if (Physics.Raycast(headPos.position, normDir, out hit))
+
+        if (Physics.Raycast(headPos.position, playerDirection, out hit))
         {
-            if (hit.collider.CompareTag("Player"))
+
+
+
+            if (angleToPlayer <= fov && hit.collider.CompareTag("Player"))
             {
-                float angle = Vector3.Angle(transform.forward, normDir);
-                if (angle < fov / 2f)
+                agent.SetDestination(GameManager.instance.player.transform.position);
+
+                if (agent.remainingDistance <= agent.stoppingDistance)
                 {
-                    return true;
+                    FaceTarget();
                 }
+
+
+                if (shootTimer >= shootRate)
+                {
+                    shootTimer = 0f;
+                    if (shootPos != null && bulletPrefab != null)
+                    {
+                        Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
+                    }
+                    
+                }
+                return true;
             }
+        
         }
         return false;
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -120,12 +133,19 @@ public class Enemy : MonoBehaviour, IDamage
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    //private void OnTriggerStay(Collider other)
+    //{
+        //if (other.CompareTag("Player") && playerInTrigger && CanSeePlayer())
+        //{
+        //    // Enemy sees player → can shoot aggressively
+        //    // Add attack logic here if desired
+        //} commented out to improve enemyAI
+    //}
+
+    IEnumerator FlashRed()
     {
-        if (other.CompareTag("Player") && playerInTrigger && CanSeePlayer())
-        {
-            // Enemy sees player → can shoot aggressively
-            // Add attack logic here if desired
-        }
+        enemyMaterial.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        enemyMaterial.color = Color.yellow;
     }
 }

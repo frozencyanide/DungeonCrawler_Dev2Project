@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   speed: 15
-  lifetime: 5
+  lifetime: 20
   damage: 5
 --- !u!1001 &853127935803113222
 PrefabInstance:
