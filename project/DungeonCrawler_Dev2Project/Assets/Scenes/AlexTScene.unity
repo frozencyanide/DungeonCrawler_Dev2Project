@@ -119,6 +119,28 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &157740579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7178339058090963219, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+  m_PrefabInstance: {fileID: 1738647491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &157740584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157740579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e35d28a866f090a4f81c979fb73066c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::cameraController
+  sens: 300
+  lockVertMin: -90
+  lockVertMax: 90
+  invertY: 0
+  player: {fileID: 1902815326}
 --- !u!1 &1071559676
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,11 +437,31 @@ PrefabInstance:
       propertyPath: speed
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 8237726304183551394, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+      propertyPath: shootDist
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8237726304183551394, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+      propertyPath: shootRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8237726304183551394, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+      propertyPath: shootDamage
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7178339058090963219, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 157740584}
   m_SourcePrefab: {fileID: 100100000, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+--- !u!4 &1902815326 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8193976339027824192, guid: d2f428aff5f6d22429109a6927b9c780, type: 3}
+  m_PrefabInstance: {fileID: 1738647491}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7091926130737333113
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -432,6 +474,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 5891137268071382893, guid: 6d35de569bf7a04479c74b74f7899d7d, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 6830940342855464371, guid: b2ab5dd8d9b54be4f9cc0da4768c8a90, type: 3}
     - target: {fileID: 6522724120595250213, guid: 6d35de569bf7a04479c74b74f7899d7d, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
