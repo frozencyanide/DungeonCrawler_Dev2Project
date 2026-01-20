@@ -1,58 +1,101 @@
-using System.Xml.Serialization;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System;
 
-public class gameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
+    [Header("Menus")]
     [SerializeField] GameObject ActiveMenu;
     [SerializeField] GameObject PauseMenu;
     [SerializeField] GameObject LossScreen;
     [SerializeField] GameObject VictoryScreen;
+    public GameObject DamageFlash;
 
-    public bool isPaused;
+    [Header("Player Reference")]
     public GameObject player;
-    public playerController pController;
+    public PlayerController pController;
 
+    [Header("UI")]
+    public Image playerHPBar;               // Drag the fill Image here in Inspector
+    public bool isPaused { get; private set; }
     float timeScaleOriginal;
 
-    int goalCount;
+    [Header("Win Condition")]
+    public List<Enemy> activeEnemies = new List<Enemy>();
+    int initialEnemyCount;
+    [SerializeField] TMP_Text GoalMissionText;
+    [SerializeField] TMP_Text GoalCountText;
+    public GameObject WinArea;
+    public GameObject BossDoor;
+    public GameObject VictoryDoor;
 
-    public static gameManager instance;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+     
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
-        timeScaleOriginal = Time.timeScale;
 
-        player = GameObject.FindWithTag("Player");
-        pController = player.GetComponent<playerController>();
+        if (WinArea == null)
+        {
+            WinArea = GameObject.FindWithTag("WinArea");
+        }
+        if (BossDoor == null)
+        {
+            BossDoor = GameObject.FindWithTag("Door1");
+        }
+        if (VictoryDoor == null)
+        {
+            VictoryDoor = GameObject.FindWithTag("Door2");
+        }
+
+        if (player == null)
+        {
+            player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                pController = player.GetComponent<PlayerController>();
+            }
+        }
+
+       
     }
 
-    // Update is called once per frame
+    private void Start()
+    {
+        Time.timeScale = 1f;
+        timeScaleOriginal = Time.timeScale;
+    }
+
     void Update()
     {
+     
         if (Input.GetButtonDown("Cancel"))
         {
-
             if (ActiveMenu == null)
             {
                 PauseGame();
                 ActiveMenu = PauseMenu;
-                ActiveMenu.SetActive(true);
+                if (ActiveMenu != null) ActiveMenu.SetActive(true);
             }
             else
             {
                 UnpauseGame();
             }
         }
-
     }
-        
 
     public void PauseGame()
     {
         isPaused = true;
-        Time.timeScale = 0;
+        Time.timeScale = 0f;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -63,28 +106,65 @@ public class gameManager : MonoBehaviour
         Time.timeScale = timeScaleOriginal;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        
-        ActiveMenu.SetActive(false);
-        ActiveMenu = null;
+
+        if (ActiveMenu != null)
+        {
+            ActiveMenu.SetActive(false);
+            ActiveMenu = null;
+        }
     }
 
     public void LostGame()
     {
         PauseGame();
         ActiveMenu = LossScreen;
-        ActiveMenu.SetActive(true);
+        if (ActiveMenu != null) ActiveMenu.SetActive(true);
     }
 
-   public void updateGameGoal(int amount)
+    public void RegisterEnemy(Enemy enemy)
     {
-        goalCount += amount;
-        if(goalCount <=0)
+        if (enemy == null) return;
+
+        if (!activeEnemies.Contains(enemy))
         {
-            //you Win!
-            PauseGame();
-            ActiveMenu = VictoryScreen;
-            ActiveMenu.SetActive(true);
+            activeEnemies.Add(enemy);
+            initialEnemyCount = activeEnemies.Count;
+        }
+        UpdateGoalCount();
+    }
+
+    public void EnemyDied(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        activeEnemies.Remove(enemy);
+        UpdateGoalCount();
+        
+    }
+
+    public void VictoryGame()
+    {
+        PauseGame();
+        ActiveMenu = VictoryScreen;
+        if (ActiveMenu != null) { ActiveMenu.SetActive(true); }
+    }
+
+   public void UpdateGoalCount()
+    {
+        GoalCountText.text = activeEnemies.Count.ToString();
+
+        if (GoalCountText.text == "1" && initialEnemyCount != 1)
+        {
+            GoalMissionText.text = "Defeat the boss!";
+            
+            BossDoor.SetActive(false);
+        }
+
+        if (GoalCountText.text == "0")
+        {
+            GoalMissionText.text = "Get to the treasure room!";
+            GoalCountText.text = "";
+            VictoryDoor.SetActive(false);
         }
     }
-
 }
