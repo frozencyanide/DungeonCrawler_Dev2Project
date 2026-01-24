@@ -1,45 +1,48 @@
 using System.Threading;
 using UnityEngine;
+using System.Collections;
 
-public class playerController : MonoBehaviour, IDamage
+public class PlayerController : MonoBehaviour, IDamage
 {
-    [Header("----- Components:")]
+    [Header("----- Components -----")]
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
 
-    [Header("----- Stats:")]
-    [Range(1, 10)][SerializeField] int HP;
-    [Range(1, 10)][SerializeField] int speed;
-    [Range(2, 5)][SerializeField] int sprintMod;
-    [Range(8, 20)][SerializeField] int jumpSpeed;
-    [Range(1, 3)][SerializeField] int jumpMax;
+    [Header("----- Stats -----")]
+    [Range(1, 10)][SerializeField] int HP = 5;
+    [Range(1, 10)][SerializeField] int speed = 5;
+    [Range(2, 5)][SerializeField] int sprintMod = 2;
+    [Range(8, 20)][SerializeField] int jumpSpeed = 8;
+    [Range(1, 3)][SerializeField] int jumpMax = 1;
 
-    [Header("----- Physics:")]
-    [Range(15, 40)][SerializeField] int gravity;
+    [Header("----- Physics -----")]
+    [Range(15, 40)][SerializeField] int gravity = 20;
 
-    [Header("----- Guns:")]
-    [SerializeField] int shootDamage;
-    [SerializeField] int shootDist;
-    [SerializeField] float shootRate;
+    [Header("----- Guns -----")]
+    [SerializeField] int shootDamage = 1;
+    [SerializeField] int shootDist = 50;
+    [SerializeField] float shootRate = 0.25f;
 
     int jumpCount;
     int HPOriginal;
-
     float shootTimer;
-
-
     Vector3 moveDir;
     Vector3 playerVel;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    int baseSpeed;
+
     void Start()
     {
+        baseSpeed = speed;
         HPOriginal = HP;
+        UpdatePlayerUI();           // Initialize UI
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (GameManager.instance != null && GameManager.instance.isPaused)
+            return;
+
         movement();
         sprint();
     }
@@ -47,18 +50,20 @@ public class playerController : MonoBehaviour, IDamage
     void movement()
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
+
         shootTimer += Time.deltaTime;
 
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) + (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * speed * Time.deltaTime);
+        moveDir = (Input.GetAxis("Horizontal") * transform.right) +
+                    (Input.GetAxis("Vertical") * transform.forward);
 
-        jump();
+        controller.Move(moveDir * speed * Time.deltaTime);
         controller.Move(playerVel * Time.deltaTime);
+        jump();
 
         if (controller.isGrounded)
         {
             jumpCount = 0;
-            playerVel = Vector3.zero;
+            playerVel.y = 0;
         }
         else
         {
@@ -82,30 +87,19 @@ public class playerController : MonoBehaviour, IDamage
 
     void sprint()
     {
-        if (Input.GetButtonDown("Sprint"))
-        {
-            speed *= sprintMod;
-        }
-        else if (Input.GetButtonUp("Sprint"))
-        {
-            speed /= sprintMod;
-        }
-
-
+        speed = Input.GetButton("Sprint") ? baseSpeed * sprintMod : baseSpeed;
     }
 
     void shoot()
     {
-        shootTimer = 0;
-
+        shootTimer = 0f;
         RaycastHit hit;
-
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreLayer))
+        if (Physics.Raycast(Camera.main.transform.position,
+                            Camera.main.transform.forward,
+                            out hit,
+                            shootDist, ~ignoreLayer, QueryTriggerInteraction.Ignore))
         {
-            Debug.Log(hit.collider.name);
-
-            IDamage dmg = hit.collider.GetComponent<IDamage>();
-
+            IDamage dmg = hit.collider.GetComponentInParent<IDamage>();
             if (dmg != null)
             {
                 dmg.takeDamage(shootDamage);
@@ -113,13 +107,39 @@ public class playerController : MonoBehaviour, IDamage
         }
     }
 
+    public void UpdatePlayerUI()
+    {
+        if (GameManager.instance != null && GameManager.instance.playerHPBar != null)
+        {
+           GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
+        }
+    }
+
     public void takeDamage(int amount)
     {
         HP -= amount;
+        UpdatePlayerUI();
+        
 
-        if(HP <= 0)
+        if (HP <= 0)
         {
-            gameManager.instance.LostGame();
+            HP = 0;
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.LostGame();
+            }
         }
+        else
+        {
+            StartCoroutine(flashDamage());
+        }
+    }
+    IEnumerator flashDamage()
+    {
+        GameManager.instance.DamageFlash.SetActive(true);
+
+        yield return new WaitForSeconds(0.1f);
+
+        GameManager.instance.DamageFlash.SetActive(false);
     }
 }

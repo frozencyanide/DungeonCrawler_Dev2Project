@@ -26,7 +26,7 @@ public class enemyDamage : MonoBehaviour
         }
     }
 
-    private void onTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)
         {

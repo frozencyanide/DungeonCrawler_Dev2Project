@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3018258168206638405}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0.251}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -52,16 +52,16 @@ MonoBehaviour:
   controller: {fileID: 2890101452950189159}
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
-  HP: 1
-  speed: 1
+    m_Bits: 8
+  HP: 10
+  speed: 5
   sprintMod: 2
-  jumpSpeed: 8
-  jumpMax: 1
-  gravity: 15
-  shootDamage: 1
-  shootDist: 150
-  shootRate: 2
+  jumpSpeed: 12
+  jumpMax: 2
+  gravity: 23
+  shootDamage: 2
+  shootDist: 400
+  shootRate: 0.75
 --- !u!33 &2912106192394451962
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 6823693269541423180}
   - component: {fileID: 2812429601678537082}
   - component: {fileID: 2894029231878126305}
+  - component: {fileID: 4352197182081002084}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -304,3 +305,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &4352197182081002084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7178339058090963219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e35d28a866f090a4f81c979fb73066c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::cameraController
+  sens: 300
+  lockVertMin: -90
+  lockVertMax: 90
+  invertY: 0
+  player: {fileID: 0}
