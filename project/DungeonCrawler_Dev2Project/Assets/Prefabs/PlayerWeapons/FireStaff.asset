@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c6ef42a05560534c86d66c9211313cc, type: 3}
+  m_Name: FireStaff
+  m_EditorClassIdentifier: Assembly-CSharp::weaponStats
+  powerStoneModel: {fileID: 441243399938253017, guid: 9f7d40ac82ac67442b2920c44c8408ac, type: 3}
+  staffDamage: 2
+  staffDistance: 40
+  staffFireRate: 1
+  currentAmmo: 10
+  MaxAmmo: 10
+  hitEffect: {fileID: 4396827199508892755, guid: 24016be1463f36442a72d7fb34c89863, type: 3}
