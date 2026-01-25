@@ -18,11 +18,13 @@ public class GameManager : MonoBehaviour
     [Header("Player Reference")]
     public GameObject player;
     public PlayerController pController;
+    public GameObject SpawnPoint;
 
     [Header("UI")]
     public Image playerHPBar;               // Drag the fill Image here in Inspector
     public bool isPaused { get; private set; }
     float timeScaleOriginal;
+    public GameObject CheckpointPopUp;
 
     [Header("Win Condition")]
     public List<Enemy> activeEnemies = new List<Enemy>();
@@ -55,6 +57,10 @@ public class GameManager : MonoBehaviour
         {
             VictoryDoor = GameObject.FindWithTag("Door2");
         }
+        if(SpawnPoint == null)
+        {
+            SpawnPoint = GameObject.FindWithTag("SpawnPoint");
+        }
 
         if (player == null)
         {
@@ -65,7 +71,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-       
+        pController.RespawnPlayer();
     }
 
     private void Start()

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,13 @@ public class buttonFunctions : MonoBehaviour
     {
         GameManager.instance.UnpauseGame();
     }
+
+    public void Respawn()
+    {
+        GameManager.instance.pController.RespawnPlayer();
+        GameManager.instance.UnpauseGame();
+    }
+
 
     public void Restart()
     {

@@ -11,6 +11,7 @@ TagManager:
   - Enemy
   - BigEnemy
   - WinArea
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX
