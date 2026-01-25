@@ -165,7 +165,7 @@ MonoBehaviour:
   agent: {fileID: 3958246712522959024}
   shootPos: {fileID: 2025287106821997807}
   bulletPrefab: {fileID: 3023508760517167749, guid: 5d16a7a3b56a90d40b46a2a5ca52c454, type: 3}
-  enemyMaterial: {fileID: 2100000, guid: 7b8ce543169151342a3e865bd1f6fbf3, type: 2}
+  model: {fileID: 5536742615029205694}
   shootRate: 2
   faceTargetSpeed: 5
   maxHealth: 5
