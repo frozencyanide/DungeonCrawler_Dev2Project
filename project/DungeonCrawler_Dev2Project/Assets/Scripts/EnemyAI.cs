@@ -10,6 +10,10 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Material enemyMaterial;
 
+    //adding stats to determine how far enemy roams and how often they change positions
+    [SerializeField] int roamDistance;
+    [SerializeField] int roamPauseTime;
+
 
     [Header("----- Stats -----")]
     [SerializeField] private float shootRate = 2f;
@@ -22,12 +26,23 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private float fov = 45f;             // Field of view angle
 
     private float shootTimer;
-    private Vector3 playerDirection;
     private float angleToPlayer;
+    private float roamTimer;
+    private float originalStoppingDistance;
+   
+    private Vector3 playerDirection;
+    private Vector3 enemyStartPos;
+
     private bool playerInTrigger;
+
+    //starting position for enemy AI before they roam
+    
+
+
 
     void Start()
     {
+
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -39,14 +54,39 @@ public class Enemy : MonoBehaviour, IDamage
 
     void Update()
     {
-        if (GameManager.instance.player == null) return;
-
         shootTimer += Time.deltaTime;
 
-        if (playerInTrigger && CanSeePlayer())
-        {
+        if (agent.remainingDistance < 0.01f)
+            roamTimer += Time.deltaTime;
 
+        if (playerInTrigger && !CanSeePlayer())
+        {
+            checkRoam();
         }
+        else if (!playerInTrigger)
+        {
+            checkRoam();
+        }
+    }
+
+    void checkRoam()
+    {
+        if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime)
+        {
+            roam();
+        }
+    }
+
+    void roam()
+    {
+        roamTimer = 0;
+        agent.stoppingDistance = 0;
+        Vector3 randPos = Random.insideUnitSphere * roamDistance;
+        randPos += enemyStartPos;
+
+        NavMeshHit hit;
+        NavMesh.SamplePosition(randPos, out hit, roamDistance, 1);
+        agent.SetDestination(hit.position);
     }
 
     private void FaceTarget()
@@ -87,9 +127,6 @@ public class Enemy : MonoBehaviour, IDamage
 
         if (Physics.Raycast(headPos.position, playerDirection, out hit))
         {
-
-
-
             if (angleToPlayer <= fov && hit.collider.CompareTag("Player"))
             {
                 agent.SetDestination(GameManager.instance.player.transform.position);
@@ -131,6 +168,7 @@ public class Enemy : MonoBehaviour, IDamage
         {
             playerInTrigger = false;
         }
+        agent.stoppingDistance = 0;    
     }
 
     //private void OnTriggerStay(Collider other)
