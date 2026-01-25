@@ -1119,6 +1119,8 @@ MonoBehaviour:
   shootPos: {fileID: 787011201169874901}
   bulletPrefab: {fileID: 0}
   model: {fileID: 6378954596011687785}
+  roamDistance: 20
+  roamPauseTime: 1
   shootRate: 2
   faceTargetSpeed: 5
   maxHealth: 2
