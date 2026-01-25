@@ -6,6 +6,11 @@ TagManager:
   tags:
   - Door1
   - Door2
+  - Environment
+  - Wall
+  - Enemy
+  - BigEnemy
+  - WinArea
   layers:
   - Default
   - TransparentFX
