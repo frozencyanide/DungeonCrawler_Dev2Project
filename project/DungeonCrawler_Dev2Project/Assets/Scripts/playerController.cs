@@ -9,19 +9,20 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] LayerMask ignoreLayer;
 
     [Header("----- Stats -----")]
-    [Range(1, 10)][SerializeField] int HP = 5;
-    [Range(1, 10)][SerializeField] int speed = 5;
-    [Range(2, 5)][SerializeField] int sprintMod = 2;
-    [Range(8, 20)][SerializeField] int jumpSpeed = 8;
-    [Range(1, 3)][SerializeField] int jumpMax = 1;
+    [Range(1, 10)][SerializeField] int HP;
+    [Range(1, 10)][SerializeField] int speed;
+    [Range(2, 5)][SerializeField] int sprintMod;
+    [Range(8, 20)][SerializeField] int jumpSpeed;
+    [Range(1, 3)][SerializeField] int jumpMax;
 
     [Header("----- Physics -----")]
-    [Range(15, 40)][SerializeField] int gravity = 20;
+    [SerializeField] GameObject PlayerSpawn;
+    [Range(15, 40)][SerializeField] int gravity;
 
     [Header("----- Guns -----")]
-    [SerializeField] int shootDamage = 1;
-    [SerializeField] int shootDist = 50;
-    [SerializeField] float shootRate = 0.25f;
+    [SerializeField] int shootDamage;
+    [SerializeField] int shootDist;
+    [SerializeField] float shootRate;
 
     int jumpCount;
     int HPOriginal;
@@ -94,12 +95,16 @@ public class PlayerController : MonoBehaviour, IDamage
     {
         shootTimer = 0f;
         RaycastHit hit;
+
+       
+
         if (Physics.Raycast(Camera.main.transform.position,
                             Camera.main.transform.forward,
                             out hit,
                             shootDist, ~ignoreLayer, QueryTriggerInteraction.Ignore))
         {
-            IDamage dmg = hit.collider.GetComponentInParent<IDamage>();
+            IDamage dmg = hit.collider.GetComponent<IDamage>();
+            Debug.Log(hit.collider.name);
             if (dmg != null)
             {
                 dmg.takeDamage(shootDamage);
@@ -113,6 +118,14 @@ public class PlayerController : MonoBehaviour, IDamage
         {
            GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
         }
+    }
+
+    public void RespawnPlayer()
+    {
+        HPOriginal = HP;
+        controller.transform.position = GameManager.instance.SpawnPoint.transform.position;
+        UpdatePlayerUI();
+        Physics.SyncTransforms();
     }
 
     public void takeDamage(int amount)

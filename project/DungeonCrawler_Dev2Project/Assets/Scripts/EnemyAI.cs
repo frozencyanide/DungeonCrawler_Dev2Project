@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform shootPos;
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Material enemyMaterial;
+    [SerializeField] Renderer model;
 
     //adding stats to determine how far enemy roams and how often they change positions
     [SerializeField] int roamDistance;
@@ -35,6 +35,7 @@ public class Enemy : MonoBehaviour, IDamage
 
     private bool playerInTrigger;
 
+    Color OriginalColor;
     //starting position for enemy AI before they roam
     
 
@@ -50,6 +51,8 @@ public class Enemy : MonoBehaviour, IDamage
         {
             GameManager.instance.RegisterEnemy(this);
         }
+
+        OriginalColor = model.material.color;
     }
 
     void Update()
@@ -75,6 +78,7 @@ public class Enemy : MonoBehaviour, IDamage
         {
             roam();
         }
+        
     }
 
     void roam()
@@ -105,8 +109,11 @@ public class Enemy : MonoBehaviour, IDamage
         if (maxHealth <= 0)
         {
             if (GameManager.instance != null)
+            {
                 GameManager.instance.EnemyDied(this);
-            Destroy(gameObject);
+                Debug.Log(gameObject.name);
+                Destroy(gameObject);
+            }
         }
         else
         {
@@ -182,8 +189,8 @@ public class Enemy : MonoBehaviour, IDamage
 
     IEnumerator FlashRed()
     {
-        enemyMaterial.color = Color.red;
+        model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
-        enemyMaterial.color = Color.yellow;
+        model.material.color = OriginalColor;
     }
 }
