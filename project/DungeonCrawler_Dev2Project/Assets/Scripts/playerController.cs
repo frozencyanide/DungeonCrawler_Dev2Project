@@ -1,8 +1,10 @@
 using System.Threading;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour, IDamage
+
+public class PlayerController : MonoBehaviour, IDamage, IPickup
 {
     [Header("----- Components -----")]
     [SerializeField] CharacterController controller;
@@ -19,31 +21,37 @@ public class PlayerController : MonoBehaviour, IDamage
     [SerializeField] GameObject PlayerSpawn;
     [Range(15, 40)][SerializeField] int gravity;
 
-    [Header("----- Guns -----")]
+    [Header("----- Weapons -----")]
     [SerializeField] int shootDamage;
     [SerializeField] int shootDist;
     [SerializeField] float shootRate;
+    [SerializeField] ParticleSystem BulletSpark;
+    [SerializeField] GameObject powerStoneModel;
+    public List<weaponStats> weaponList = new List<weaponStats>();
 
     int jumpCount;
     int HPOriginal;
     float shootTimer;
+    float reloadTimer;
     Vector3 moveDir;
     Vector3 playerVel;
 
     int baseSpeed;
+    int weaponListPOS;
+    int goldCount;
 
     void Start()
     {
         baseSpeed = speed;
         HPOriginal = HP;
-        UpdatePlayerUI();           // Initialize UI
+        RespawnPlayer();
     }
 
     void Update()
     {
         if (GameManager.instance != null && GameManager.instance.isPaused)
             return;
-
+        
         movement();
         sprint();
     }
@@ -53,6 +61,7 @@ public class PlayerController : MonoBehaviour, IDamage
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
         shootTimer += Time.deltaTime;
+        
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
                     (Input.GetAxis("Vertical") * transform.forward);
@@ -71,10 +80,19 @@ public class PlayerController : MonoBehaviour, IDamage
             playerVel.y -= gravity * Time.deltaTime;
         }
 
-        if (Input.GetButton("Fire1") && shootTimer >= shootRate)
+        if (Input.GetButton("Fire1") && weaponList.Count != 0 && weaponList[weaponListPOS].currentAmmo > 0 && shootTimer >= shootRate)
         {
             shoot();
+        }else if(Input.GetButton("Fire1") && weaponList.Count != 0 && weaponList[weaponListPOS].currentAmmo == 0 && shootTimer >= shootRate)
+        {
+            reload();
+        }else if (Input.GetButtonDown("Reload"))
+        {
+            reload();
         }
+
+        selectWeapon();
+        UpdatePlayerUI();
     }
 
     void jump()
@@ -96,7 +114,7 @@ public class PlayerController : MonoBehaviour, IDamage
         shootTimer = 0f;
         RaycastHit hit;
 
-       
+        weaponList[weaponListPOS].currentAmmo--;
 
         if (Physics.Raycast(Camera.main.transform.position,
                             Camera.main.transform.forward,
@@ -105,11 +123,15 @@ public class PlayerController : MonoBehaviour, IDamage
         {
             IDamage dmg = hit.collider.GetComponent<IDamage>();
             Debug.Log(hit.collider.name);
+
+            Instantiate(BulletSpark, hit.point, Quaternion.identity);
+
             if (dmg != null)
             {
                 dmg.takeDamage(shootDamage);
             }
         }
+
     }
 
     public void UpdatePlayerUI()
@@ -117,6 +139,12 @@ public class PlayerController : MonoBehaviour, IDamage
         if (GameManager.instance != null && GameManager.instance.playerHPBar != null)
         {
            GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
+        }
+
+        if(GameManager.instance != null)
+        {
+            GameManager.instance.maxAmmoText.text = weaponList[weaponListPOS].MaxAmmo.ToString();
+            GameManager.instance.currentAmmoText.text = weaponList[weaponListPOS].currentAmmo.ToString();
         }
     }
 
@@ -154,5 +182,74 @@ public class PlayerController : MonoBehaviour, IDamage
         yield return new WaitForSeconds(0.1f);
 
         GameManager.instance.DamageFlash.SetActive(false);
+    }
+
+    public void getWeaponStats(weaponStats weapon)
+    {
+        if (!weaponList.Contains(weapon))
+        {
+            weaponList.Add(weapon);
+            weaponListPOS = weaponList.Count - 1;
+        }
+        else
+        {
+            weaponList.Remove(weapon);
+            weaponList.Add(weapon);
+            weaponListPOS = weaponList.Count - 1;
+        }
+            changeWeapon();
+    }
+
+    void changeWeapon()
+    {
+        shootDamage = weaponList[weaponListPOS].staffDamage;
+        shootDist = weaponList[weaponListPOS].staffDistance;
+        shootRate = weaponList[weaponListPOS].staffFireRate;
+        BulletSpark = weaponList[weaponListPOS].hitEffect;
+
+        powerStoneModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPOS].powerStoneModel.GetComponent<MeshFilter>().sharedMesh;
+        powerStoneModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPOS].powerStoneModel.GetComponent<MeshRenderer>().sharedMaterial;
+
+       
+    }
+
+    void selectWeapon()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && weaponListPOS < weaponList.Count - 1)
+        {
+            weaponListPOS++;
+            changeWeapon();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && weaponListPOS > 0)
+        {
+            weaponListPOS--;
+            changeWeapon();
+        }
+        else if (Input.GetButtonDown("Weapon1") && weaponList.Count >= 1)
+        {
+            weaponListPOS = 0;
+            changeWeapon();
+        }
+        else if (Input.GetButtonDown("Weapon2") && weaponList.Count >= 2)
+        {
+            weaponListPOS = 1;
+            changeWeapon();
+        }
+        else if (Input.GetButtonDown("Weapon3") && weaponList.Count > 3)
+        {
+            weaponListPOS = 2;
+            changeWeapon();
+        }
+    }
+
+    void reload()
+    {
+        if (weaponList.Count > 0)
+        {
+            reloadTimer -= Time.deltaTime;
+            if (reloadTimer <= 0){
+                weaponList[weaponListPOS].currentAmmo = weaponList[weaponListPOS].MaxAmmo;
+            }
+        }
     }
 }

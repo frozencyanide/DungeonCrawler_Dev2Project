@@ -25,10 +25,13 @@ public class GameManager : MonoBehaviour
     public bool isPaused { get; private set; }
     float timeScaleOriginal;
     public GameObject CheckpointPopUp;
+    public GameObject AmmoTextBox;
+    public TMP_Text currentAmmoText;
+    public TMP_Text maxAmmoText;
+    public GameObject ItemPopUp;
 
     [Header("Win Condition")]
     public List<Enemy> activeEnemies = new List<Enemy>();
-    int initialEnemyCount;
     [SerializeField] TMP_Text GoalMissionText;
     [SerializeField] TMP_Text GoalCountText;
     public GameObject WinArea;
@@ -71,11 +74,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        pController.RespawnPlayer();
+        
     }
 
     private void Start()
     {
+        pController.RespawnPlayer();
         Time.timeScale = 1f;
         timeScaleOriginal = Time.timeScale;
     }
@@ -134,7 +138,6 @@ public class GameManager : MonoBehaviour
         if (!activeEnemies.Contains(enemy))
         {
             activeEnemies.Add(enemy);
-            initialEnemyCount = activeEnemies.Count;
         }
         UpdateGoalCount();
     }
@@ -155,22 +158,26 @@ public class GameManager : MonoBehaviour
         if (ActiveMenu != null) { ActiveMenu.SetActive(true); }
     }
 
+
    public void UpdateGoalCount()
     {
         GoalCountText.text = activeEnemies.Count.ToString();
-
-        if (GoalCountText.text == "1" && initialEnemyCount != 1)
+       
+        if (GoalCountText.text == "1")
         {
             GoalMissionText.text = "Defeat the boss!";
             
             BossDoor.SetActive(false);
-        }
-
+        } else
         if (GoalCountText.text == "0")
         {
             GoalMissionText.text = "Get to the treasure room!";
             GoalCountText.text = "";
             VictoryDoor.SetActive(false);
+        }
+        else
+        {
+            GoalMissionText.text = "Enemies Remaining: ";
         }
     }
 }
