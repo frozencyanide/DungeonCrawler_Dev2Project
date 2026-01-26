@@ -152,10 +152,12 @@ public class Enemy : MonoBehaviour, IDamage
                     }
                     
                 }
+                agent.stoppingDistance = originalStoppingDistance;
                 return true;
             }
         
         }
+        agent.stoppingDistance = 0;
         return false;
     }
 
