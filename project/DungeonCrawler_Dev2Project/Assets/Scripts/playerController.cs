@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
            GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOriginal;
         }
 
-        if(GameManager.instance != null)
+        if(GameManager.instance != null && weaponList.Count > 1)
         {
             GameManager.instance.maxAmmoText.text = weaponList[weaponListPOS].MaxAmmo.ToString();
             GameManager.instance.currentAmmoText.text = weaponList[weaponListPOS].currentAmmo.ToString();
