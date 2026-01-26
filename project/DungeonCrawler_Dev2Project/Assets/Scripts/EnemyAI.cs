@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour, IDamage
         {
             GameManager.instance.RegisterEnemy(this);
         }
-
+        originalStoppingDistance = agent.stoppingDistance;
         OriginalColor = model.material.color;
     }
 
