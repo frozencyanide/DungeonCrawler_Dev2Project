@@ -142,21 +142,22 @@ public class Enemy : MonoBehaviour, IDamage
                 {
                     FaceTarget();
                 }
-
-
                 if (shootTimer >= shootRate)
                 {
-                    shootTimer = 0f;
+                    //shootTimer = 0f;
                     if (shootPos != null && bulletPrefab != null)
                     {
-                        Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
+                        //  Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
+                        shoot();
                     }
                     
                 }
+                agent.stoppingDistance = originalStoppingDistance;
                 return true;
             }
         
         }
+        agent.stoppingDistance = 0;
         return false;
     }
 
@@ -186,7 +187,11 @@ public class Enemy : MonoBehaviour, IDamage
         //    // Add attack logic here if desired
         //} commented out to improve enemyAI
     //}
-
+    void shoot()
+    {
+        shootTimer = 0;
+        Instantiate(bulletPrefab, shootPos.position, transform.rotation);
+    }
     IEnumerator FlashRed()
     {
         model.material.color = Color.red;
