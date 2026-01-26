@@ -166,7 +166,7 @@ MonoBehaviour:
   shootPos: {fileID: 2025287106821997807}
   bulletPrefab: {fileID: 3023508760517167749, guid: 5d16a7a3b56a90d40b46a2a5ca52c454, type: 3}
   model: {fileID: 5536742615029205694}
-  roamDistance: 10
+  roamDistance: 20
   roamPauseTime: 2
   shootRate: 2
   faceTargetSpeed: 5
