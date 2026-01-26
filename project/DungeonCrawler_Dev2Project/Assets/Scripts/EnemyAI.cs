@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour, IDamage
     private float angleToPlayer;
     private float roamTimer;
     private float originalStoppingDistance;
+    private float distanceToPlayer;
    
     private Vector3 playerDirection;
     private Vector3 enemyStartPos;
@@ -132,7 +133,7 @@ public class Enemy : MonoBehaviour, IDamage
 
         RaycastHit hit;
 
-        if (Physics.Raycast(headPos.position, playerDirection, out hit))
+        if (Physics.Raycast(headPos.position, playerDirection, out hit, sightDistance))
         {
             if (angleToPlayer <= fov && hit.collider.CompareTag("Player"))
             {
