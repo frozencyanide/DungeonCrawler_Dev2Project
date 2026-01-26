@@ -367,7 +367,7 @@ MonoBehaviour:
   shootRate: 0.2
   faceTargetSpeed: 5
   maxHealth: 3
-  sightDistance: 45
+  sightDistance: 25
   headPos: {fileID: 4339933123713568456}
   fov: 45
 --- !u!33 &2782465270880049788
