@@ -53,7 +53,7 @@ MonoBehaviour:
   rb: {fileID: 2887316187464579093}
   damageAmount: 1
   damageRate: 0
-  speed: 10
+  speed: 20
   destroyTime: 5
   hitEffect: {fileID: 296339609564615877, guid: 24016be1463f36442a72d7fb34c89863, type: 3}
 --- !u!33 &6206479479041585884
@@ -252,7 +252,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3023508760517167749}
   serializedVersion: 5
-  m_Mass: 0.25
+  m_Mass: 0.1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

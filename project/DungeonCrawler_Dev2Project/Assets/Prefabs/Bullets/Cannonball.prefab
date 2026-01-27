@@ -45,7 +45,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6233622731067266625}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.00001
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -59,7 +59,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -97,7 +97,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: abed7d0368104514090c094992a518ba, type: 2}
+  - {fileID: 2100000, guid: ef19a33ea54164d4591aae0ee4485fb1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -268,6 +268,6 @@ MonoBehaviour:
   rb: {fileID: 5291721311578973568}
   damageAmount: 5
   damageRate: 0
-  speed: 10
+  speed: 20
   destroyTime: 10
   hitEffect: {fileID: 0}

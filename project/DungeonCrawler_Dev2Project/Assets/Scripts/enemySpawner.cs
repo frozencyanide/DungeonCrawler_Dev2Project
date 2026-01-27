@@ -3,10 +3,12 @@ using UnityEngine;
 public class enemySpawner : MonoBehaviour
 {
     [SerializeField] GameObject objectToSpawn;
-    [SerializeField] int spawnAmount;
-    [SerializeField] int spawnRate;
+    [Range(1, 10)][SerializeField] int spawnTotalAmount;
+    [Range(1, 3)][SerializeField] int perSpawnAmount;
+    [Range(0.1f, 20)][SerializeField] float spawnRate;
 
     int spawnCount;
+    
     float spawnTimer;
 
     bool startSpawning;
@@ -14,7 +16,8 @@ public class enemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        GameManager.instance.UpdateGoalCount(spawnTotalAmount * perSpawnAmount);
+       
     }
 
     // Update is called once per frame
@@ -24,7 +27,7 @@ public class enemySpawner : MonoBehaviour
         {
             spawnTimer += Time.deltaTime;
 
-            if(spawnCount < spawnAmount && spawnTimer >= spawnRate)
+            if(spawnCount < spawnTotalAmount && spawnTimer >= spawnRate)
             {
                 spawn();
             }
@@ -44,7 +47,9 @@ public class enemySpawner : MonoBehaviour
     {
         spawnTimer = 0;
         spawnCount++;
-        Instantiate(objectToSpawn, transform.position, Quaternion.identity);
+        for (int i = 0; i < perSpawnAmount; i++) {
+            Instantiate(objectToSpawn, transform.position, Quaternion.identity);
+        }
     }
 
 }

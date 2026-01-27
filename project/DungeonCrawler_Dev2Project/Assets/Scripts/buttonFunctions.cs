@@ -14,12 +14,14 @@ public class buttonFunctions : MonoBehaviour
     {
         GameManager.instance.pController.RespawnPlayer();
         GameManager.instance.UnpauseGame();
+        GameManager.instance.pController.UpdatePlayerUI();
     }
 
 
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.instance.UnpauseGame();
     }
 
     public void Quit()
