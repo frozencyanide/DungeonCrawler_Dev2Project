@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private Transform shootPos;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] Renderer model;
+    [SerializeField] GameObject dropItem;
 
     //adding stats to determine how far enemy roams and how often they change positions
     [SerializeField] int roamDistance;
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour, IDamage
     private float angleToPlayer;
     private float roamTimer;
     private float originalStoppingDistance;
+    private float distanceToPlayer;
    
     private Vector3 playerDirection;
     private Vector3 enemyStartPos;
@@ -43,7 +45,7 @@ public class Enemy : MonoBehaviour, IDamage
 
     void Start()
     {
-
+    
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -111,7 +113,13 @@ public class Enemy : MonoBehaviour, IDamage
             if (GameManager.instance != null)
             {
                 GameManager.instance.EnemyDied(this);
-                Debug.Log(gameObject.name);
+              
+               
+                if(dropItem != null)
+                {
+                    Instantiate(dropItem, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.identity);
+                }
+
                 Destroy(gameObject);
             }
         }
@@ -132,7 +140,7 @@ public class Enemy : MonoBehaviour, IDamage
 
         RaycastHit hit;
 
-        if (Physics.Raycast(headPos.position, playerDirection, out hit))
+        if (Physics.Raycast(headPos.position, playerDirection, out hit, sightDistance))
         {
             if (angleToPlayer <= fov && hit.collider.CompareTag("Player"))
             {

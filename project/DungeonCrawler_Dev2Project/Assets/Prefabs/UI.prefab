@@ -2219,7 +2219,7 @@ MonoBehaviour:
   AmmoTextBox: {fileID: 311780036896823977}
   currentAmmoText: {fileID: 6679025006433125472}
   maxAmmoText: {fileID: 7642567905971024605}
-  ItemPopUp: {fileID: 0}
+  ItemPopUp: {fileID: 2356574398028739289}
   activeEnemies: []
   GoalMissionText: {fileID: 2421286345270740859}
   GoalCountText: {fileID: 8115144360721179767}
