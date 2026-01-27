@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private Transform shootPos;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] Renderer model;
+    [SerializeField] GameObject dropItem;
 
     //adding stats to determine how far enemy roams and how often they change positions
     [SerializeField] int roamDistance;
@@ -44,7 +45,7 @@ public class Enemy : MonoBehaviour, IDamage
 
     void Start()
     {
-
+    
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -112,7 +113,13 @@ public class Enemy : MonoBehaviour, IDamage
             if (GameManager.instance != null)
             {
                 GameManager.instance.EnemyDied(this);
-                Debug.Log(gameObject.name);
+              
+               
+                if(dropItem != null)
+                {
+                    Instantiate(dropItem, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.identity);
+                }
+
                 Destroy(gameObject);
             }
         }
