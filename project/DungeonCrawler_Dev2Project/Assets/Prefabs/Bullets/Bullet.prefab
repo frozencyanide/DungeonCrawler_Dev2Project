@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1944545241283661700}
-  - component: {fileID: 2367501438112290047}
+  - component: {fileID: 1763786886342658031}
   - component: {fileID: 6206479479041585884}
   - component: {fileID: 1609423382245520144}
   - component: {fileID: 2867399460403939882}
   - component: {fileID: 1931440513215425478}
+  - component: {fileID: 2887316187464579093}
   m_Layer: 8
   m_Name: Bullet
   m_TagString: Untagged
@@ -36,7 +37,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2367501438112290047
+--- !u!114 &1763786886342658031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,12 +46,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3023508760517167749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 421d1d873449a7d4292bba5ad2a5ede9, type: 3}
+  m_Script: {fileID: 11500000, guid: dfd11a5a99659294cad9161096fd949a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  speed: 10
-  lifetime: 3
-  damage: 1
+  m_EditorClassIdentifier: Assembly-CSharp::enemyDamage
+  type: 0
+  rb: {fileID: 2887316187464579093}
+  damageAmount: 1
+  damageRate: 0
+  speed: 20
+  destroyTime: 5
+  hitEffect: {fileID: 296339609564615877, guid: 24016be1463f36442a72d7fb34c89863, type: 3}
 --- !u!33 &6206479479041585884
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -84,7 +89,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f7838fa544c68fa46b44b800b71a4e36, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -239,3 +244,30 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!54 &2887316187464579093
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3023508760517167749}
+  serializedVersion: 5
+  m_Mass: 0.1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

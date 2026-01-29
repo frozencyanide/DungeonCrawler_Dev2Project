@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     public GameObject BossDoor;
     public GameObject VictoryDoor;
 
+    int goalCount;
+
     void Awake()
     {
      
@@ -80,7 +82,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         pController.RespawnPlayer();
-        Time.timeScale = 1f;
         timeScaleOriginal = Time.timeScale;
     }
 
@@ -139,7 +140,7 @@ public class GameManager : MonoBehaviour
         {
             activeEnemies.Add(enemy);
         }
-        UpdateGoalCount();
+       
     }
 
     public void EnemyDied(Enemy enemy)
@@ -147,8 +148,15 @@ public class GameManager : MonoBehaviour
         if (enemy == null) return;
 
         activeEnemies.Remove(enemy);
-        UpdateGoalCount();
-        
+        UpdateGoalCount(-1);
+        if (goalCount == 1)
+        {
+            BossDoor.SetActive(false);
+        }
+        else if (goalCount == 0)
+        {
+            VictoryDoor.SetActive(false);
+        }
     }
 
     public void VictoryGame()
@@ -159,25 +167,25 @@ public class GameManager : MonoBehaviour
     }
 
 
-   public void UpdateGoalCount()
+   public void UpdateGoalCount(int amount)
     {
-        GoalCountText.text = activeEnemies.Count.ToString();
-       
-        if (GoalCountText.text == "1")
+        goalCount += amount;
+
+        if (goalCount == 1)
         {
             GoalMissionText.text = "Defeat the boss!";
-            
-            BossDoor.SetActive(false);
-        } else
-        if (GoalCountText.text == "0")
+            GoalCountText.text = "";
+        }
+        else if (goalCount == 0)
         {
             GoalMissionText.text = "Get to the treasure room!";
             GoalCountText.text = "";
-            VictoryDoor.SetActive(false);
         }
-        else
+        else 
         {
             GoalMissionText.text = "Enemies Remaining: ";
+            GoalCountText.text = goalCount.ToString();
         }
+        
     }
 }
