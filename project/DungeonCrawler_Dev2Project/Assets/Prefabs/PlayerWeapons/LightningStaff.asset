@@ -19,3 +19,5 @@ MonoBehaviour:
   currentAmmo: 40
   MaxAmmo: 40
   hitEffect: {fileID: 8303858051093228741, guid: b5919e62b774cd3438c7a96c921af8d9, type: 3}
+  attackSounds:
+  - {fileID: 8300000, guid: 380dd4501012f044199509392aef7376, type: 3}

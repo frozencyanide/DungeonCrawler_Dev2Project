@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] AudioClip[] audSteps;
     [Range(0, 1)][SerializeField] float audStepsVol;
 
+    [Range(0, 1)][SerializeField] float audAttackSoundsVol;
+
     int jumpCount;
     int HPOriginal;
     float shootTimer;
@@ -150,8 +152,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     {
         shootTimer = 0f;
         RaycastHit hit;
-
-        weaponList[weaponListPOS].currentAmmo--;
+        if (weaponList.Count > 0)
+        {
+            weaponList[weaponListPOS].currentAmmo--;
+            aud.PlayOneShot(weaponList[weaponListPOS].attackSounds[Random.Range(0, weaponList[weaponListPOS].attackSounds.Length)], audStepsVol);
+        }
 
         if (Physics.Raycast(Camera.main.transform.position,
                             Camera.main.transform.forward,

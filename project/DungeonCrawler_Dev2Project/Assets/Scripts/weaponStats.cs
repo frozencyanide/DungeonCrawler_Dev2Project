@@ -14,5 +14,6 @@ public class weaponStats : ScriptableObject
     [Range(1,50)]public int MaxAmmo;
 
     public ParticleSystem hitEffect;
+    public AudioClip[] attackSounds;
  
 }

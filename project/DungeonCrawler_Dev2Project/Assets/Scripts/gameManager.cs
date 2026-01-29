@@ -129,6 +129,7 @@ public class GameManager : MonoBehaviour
     {
         PauseGame();
         ActiveMenu = LossScreen;
+        DamageFlash.SetActive(false);
         if (ActiveMenu != null) ActiveMenu.SetActive(true);
     }
 
