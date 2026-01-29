@@ -29,6 +29,14 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GameObject powerStoneModel;
     public List<weaponStats> weaponList = new List<weaponStats>();
 
+    [Header("-----Audio-----")]
+    [SerializeField] AudioSource Aud;
+    [SerializeField] AudioClip[] AudJump;
+    [Range(0,1)][SerializeField] float audJumpVol;
+
+    [SerializeField] AudioClip[] AudSteps;
+    [Range(0, 1)][SerializeField] float audStepsVol;
+
     int jumpCount;
     int HPOriginal;
     float shootTimer;
@@ -101,6 +109,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             playerVel.y = jumpSpeed;
             jumpCount++;
+            Aud.PlayOneShot(AudJump[Random.Range(0, AudJump.Length)], audJumpVol);
         }
     }
 
@@ -182,6 +191,7 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         yield return new WaitForSeconds(0.1f);
 
         GameManager.instance.DamageFlash.SetActive(false);
+        
     }
 
     public void getWeaponStats(weaponStats weapon)
