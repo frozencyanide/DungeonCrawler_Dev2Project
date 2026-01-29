@@ -169,7 +169,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 818448350688539903}
-  - component: {fileID: 6337726095133684251}
+  - component: {fileID: 6384515438094257188}
   m_Layer: 0
   m_Name: Lizard_A
   m_TagString: Untagged
@@ -194,7 +194,7 @@ Transform:
   - {fileID: 3584653099719348698}
   m_Father: {fileID: 366813968289435507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6337726095133684251
+--- !u!95 &6384515438094257188
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -204,7 +204,7 @@ Animator:
   m_GameObject: {fileID: 883370132817615138}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bf6e1ecaee2ae5a46b759c1ee8c5865e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1164,7 +1164,7 @@ GameObject:
   - component: {fileID: 1388142793091315530}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: BigEnemy
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1202,12 +1202,15 @@ MonoBehaviour:
   bulletPrefab: {fileID: 3023508760517167749, guid: 5d16a7a3b56a90d40b46a2a5ca52c454, type: 3}
   model: {fileID: 644566485618102562}
   dropItem: {fileID: 0}
+  anim: {fileID: 6384515438094257188}
+  meleeRange: {fileID: 0}
   roamDistance: 10
   roamPauseTime: 2
   shootRate: 2
   faceTargetSpeed: 5
   maxHealth: 5
   sightDistance: 25
+  AnimationTransitionSpeed: 12
   headPos: {fileID: 2349813344687505491}
   fov: 45
   aud: {fileID: 1388142793091315530}
