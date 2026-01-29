@@ -26,6 +26,14 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private Transform headPos;           // Assign head position in Inspector
     [SerializeField] private float fov = 45f;             // Field of view angle
 
+    [Header("-----Audio-----")]
+    [SerializeField] AudioSource aud;
+    [SerializeField] AudioClip[] audSteps;
+    [Range(0, 1)][SerializeField] float audStepsVol;
+
+    bool isSprinting;
+    bool isPlayingSteps;
+
     private float shootTimer;
     private float angleToPlayer;
     private float roamTimer;
@@ -79,12 +87,18 @@ public class Enemy : MonoBehaviour, IDamage
         if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime)
         {
             roam();
+            StartCoroutine(playSteps());
+            isPlayingSteps = true;
         }
+        else
+            isPlayingSteps = false;
         
     }
 
     void roam()
     {
+
+
         roamTimer = 0;
         agent.stoppingDistance = 0;
         Vector3 randPos = Random.insideUnitSphere * roamDistance;
@@ -205,5 +219,22 @@ public class Enemy : MonoBehaviour, IDamage
         model.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         model.material.color = OriginalColor;
+    }
+
+
+    IEnumerator playSteps()
+    {
+        isPlayingSteps = true;
+        aud.PlayOneShot(audSteps[Random.Range(0, audSteps.Length)], audStepsVol);
+
+        if (isSprinting)
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        isPlayingSteps = false;
     }
 }
