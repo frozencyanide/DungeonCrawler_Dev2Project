@@ -10,6 +10,8 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] Renderer model;
     [SerializeField] GameObject dropItem;
+    [SerializeField] Animator anim;
+    [SerializeField] Collider meleeRange;
 
     //adding stats to determine how far enemy roams and how often they change positions
     [SerializeField] int roamDistance;
@@ -21,6 +23,7 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] private int faceTargetSpeed = 5;
     [SerializeField] private int maxHealth = 10;
     [SerializeField] private float sightDistance = 45f;
+    [SerializeField] int AnimationTransitionSpeed;
 
     [Header("----- Vision -----")]
     [SerializeField] private Transform headPos;           // Assign head position in Inspector
@@ -39,21 +42,23 @@ public class Enemy : MonoBehaviour, IDamage
     private float roamTimer;
     private float originalStoppingDistance;
     private float distanceToPlayer;
-   
+
     private Vector3 playerDirection;
     private Vector3 enemyStartPos;
 
     private bool playerInTrigger;
+    private bool isMeleeAttacking;
+
 
     Color OriginalColor;
     //starting position for enemy AI before they roam
-    
+
 
 
 
     void Start()
     {
-    
+
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -67,7 +72,9 @@ public class Enemy : MonoBehaviour, IDamage
 
     void Update()
     {
+        locoAnim();
         shootTimer += Time.deltaTime;
+       
 
         if (agent.remainingDistance < 0.01f)
             roamTimer += Time.deltaTime;
@@ -90,6 +97,15 @@ public class Enemy : MonoBehaviour, IDamage
             StartCoroutine(playSteps());
             isPlayingSteps = true;
         }
+
+    }
+
+    void locoAnim()
+    {
+        float agentSpeedCurrent = agent.velocity.normalized.magnitude;
+        float agentSpeedAnim = anim.GetFloat("Speed");
+
+        anim.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, agentSpeedCurrent, Time.deltaTime * AnimationTransitionSpeed));
         else
             isPlayingSteps = false;
         
@@ -127,9 +143,9 @@ public class Enemy : MonoBehaviour, IDamage
             if (GameManager.instance != null)
             {
                 GameManager.instance.EnemyDied(this);
-              
-               
-                if(dropItem != null)
+
+
+                if (dropItem != null)
                 {
                     Instantiate(dropItem, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.identity);
                 }
@@ -150,13 +166,13 @@ public class Enemy : MonoBehaviour, IDamage
         playerDirection = GameManager.instance.player.transform.position - headPos.position;
         angleToPlayer = Vector3.Angle(playerDirection, transform.forward);
         Debug.DrawRay(headPos.position, playerDirection * sightDistance, Color.white);
-
+        distanceToPlayer = playerDirection.magnitude;
 
         RaycastHit hit;
 
         if (Physics.Raycast(headPos.position, playerDirection, out hit, sightDistance))
         {
-            if (angleToPlayer <= fov && hit.collider.CompareTag("Player"))
+            if (angleToPlayer <= fov && hit.collider.CompareTag("Player") && distanceToPlayer <= sightDistance)
             {
                 agent.SetDestination(GameManager.instance.player.transform.position);
 
@@ -167,17 +183,17 @@ public class Enemy : MonoBehaviour, IDamage
                 if (shootTimer >= shootRate)
                 {
                     //shootTimer = 0f;
-                    if (shootPos != null && bulletPrefab != null)
+                    if (shootPos != null)
                     {
                         //  Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
                         shoot();
                     }
-                    
+
                 }
                 agent.stoppingDistance = originalStoppingDistance;
                 return true;
             }
-        
+
         }
         agent.stoppingDistance = 0;
         return false;
@@ -198,29 +214,51 @@ public class Enemy : MonoBehaviour, IDamage
         {
             playerInTrigger = false;
         }
-        agent.stoppingDistance = 0;    
+        agent.stoppingDistance = 0;
     }
 
     //private void OnTriggerStay(Collider other)
     //{
-        //if (other.CompareTag("Player") && playerInTrigger && CanSeePlayer())
-        //{
-        //    // Enemy sees player → can shoot aggressively
-        //    // Add attack logic here if desired
-        //} commented out to improve enemyAI
+    //if (other.CompareTag("Player") && playerInTrigger && CanSeePlayer())
+    //{
+    //    // Enemy sees player → can shoot aggressively
+    //    // Add attack logic here if desired
+    //} commented out to improve enemyAI
     //}
     void shoot()
     {
         shootTimer = 0;
-        Instantiate(bulletPrefab, shootPos.position, transform.rotation);
-    }
-    IEnumerator FlashRed()
-    {
-        model.material.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        model.material.color = OriginalColor;
+        if (bulletPrefab != null)
+        {
+            Instantiate(bulletPrefab, shootPos.position, transform.rotation);
+            anim.SetTrigger("Attack");
+        }
+
+        if (!isMeleeAttacking && distanceToPlayer <= 2f)
+        {
+            StartCoroutine(melee());
+            anim.SetTrigger("Attack");
+        }
+
+
     }
 
+    IEnumerator melee()
+    {
+        isMeleeAttacking = true;
+        meleeRange.enabled = true;
+        yield return new WaitForSeconds(0.8f);
+        meleeRange.enabled = false;
+        isMeleeAttacking = false;
+    }
+
+    IEnumerator FlashRed()
+        {
+            model.material.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            model.material.color = OriginalColor;
+        }
+}
 
     IEnumerator playSteps()
     {
