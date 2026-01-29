@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 640775988953276155}
   - component: {fileID: 6204336132460928858}
   - component: {fileID: 4995984368177933663}
+  - component: {fileID: 544633075736558180}
   m_Layer: 6
   m_Name: BigEnemy
   m_TagString: BigEnemy
@@ -53,12 +54,16 @@ MonoBehaviour:
   shootPos: {fileID: 2834850978109060608}
   bulletPrefab: {fileID: 6233622731067266625, guid: caed59d3e098a514eb3d95dd02980e3d, type: 3}
   model: {fileID: 837001589553884437}
+  dropItem: {fileID: 0}
+  anim: {fileID: 544633075736558180}
+  meleeRange: {fileID: 0}
   roamDistance: 10
   roamPauseTime: 2
   shootRate: 0.4
   faceTargetSpeed: 5
   maxHealth: 10
   sightDistance: 25
+  AnimationTransitionSpeed: 12
   headPos: {fileID: 2834850978109060608}
   fov: 45
 --- !u!33 &6704394480256806845
@@ -135,6 +140,28 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 80
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &544633075736558180
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262234480594533754}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: cfbfb95b5f2b90949be0b5faab2775fb, type: 3}
+  m_Controller: {fileID: 9100000, guid: 9f98e5398cd08e44cafc9886c314534d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &4705443786230663385
 PrefabInstance:
   m_ObjectHideFlags: 0
