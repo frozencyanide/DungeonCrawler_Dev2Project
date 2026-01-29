@@ -91,13 +91,13 @@ public class Enemy : MonoBehaviour, IDamage
 
     void checkRoam()
     {
-        if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime)
+        if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime && !isPlayingSteps)
         {
             roam();
             StartCoroutine(playSteps());
-            isPlayingSteps = true;
         }
-
+         else
+            isPlayingSteps = false;
     }
 
     void locoAnim()
@@ -106,8 +106,7 @@ public class Enemy : MonoBehaviour, IDamage
         float agentSpeedAnim = anim.GetFloat("Speed");
 
         anim.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, agentSpeedCurrent, Time.deltaTime * AnimationTransitionSpeed));
-        else
-            isPlayingSteps = false;
+       
         
     }
 
@@ -258,7 +257,7 @@ public class Enemy : MonoBehaviour, IDamage
             yield return new WaitForSeconds(0.1f);
             model.material.color = OriginalColor;
         }
-}
+
 
     IEnumerator playSteps()
     {
