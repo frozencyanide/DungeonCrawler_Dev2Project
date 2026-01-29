@@ -1,7 +1,7 @@
-using System.Threading;
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using UnityEngine;
 
 
 public class PlayerController : MonoBehaviour, IDamage, IPickup
@@ -30,11 +30,11 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     public List<weaponStats> weaponList = new List<weaponStats>();
 
     [Header("-----Audio-----")]
-    [SerializeField] AudioSource Aud;
+    [SerializeField] AudioSource aud;
     [SerializeField] AudioClip[] AudJump;
     [Range(0,1)][SerializeField] float audJumpVol;
 
-    [SerializeField] AudioClip[] AudSteps;
+    [SerializeField] AudioClip[] audSteps;
     [Range(0, 1)][SerializeField] float audStepsVol;
 
     int jumpCount;
@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
     float reloadTimer;
     Vector3 moveDir;
     Vector3 playerVel;
+
+    bool isSprinting;
+    bool isPlayingSteps;
 
     int baseSpeed;
     int weaponListPOS;
@@ -82,6 +85,10 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             jumpCount = 0;
             playerVel.y = 0;
+            if(moveDir.normalized.magnitude > 0.3f && !isPlayingSteps)
+            {
+                StartCoroutine(playSteps());
+            }
         }
         else
         {
@@ -109,13 +116,34 @@ public class PlayerController : MonoBehaviour, IDamage, IPickup
         {
             playerVel.y = jumpSpeed;
             jumpCount++;
-            Aud.PlayOneShot(AudJump[Random.Range(0, AudJump.Length)], audJumpVol);
+            aud.PlayOneShot(AudJump[Random.Range(0, AudJump.Length)], audJumpVol);
         }
     }
 
     void sprint()
     {
         speed = Input.GetButton("Sprint") ? baseSpeed * sprintMod : baseSpeed;
+        
+            isSprinting = true;
+        
+        
+            //isSprinting = false;
+    }
+
+    IEnumerator playSteps()
+    {
+      isPlayingSteps = true;
+        aud.PlayOneShot(audSteps[Random.Range(0, audSteps.Length)], audStepsVol);
+
+        if(isSprinting)
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        isPlayingSteps = false;
     }
 
     void shoot()
