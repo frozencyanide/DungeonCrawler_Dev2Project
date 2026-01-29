@@ -34,7 +34,6 @@ public class Enemy : MonoBehaviour, IDamage
     [SerializeField] AudioClip[] audSteps;
     [Range(0, 1)][SerializeField] float audStepsVol;
 
-    bool isSprinting;
     bool isPlayingSteps;
 
     private float shootTimer;
@@ -73,6 +72,7 @@ public class Enemy : MonoBehaviour, IDamage
     void Update()
     {
         locoAnim();
+        handleFootsteps();
         shootTimer += Time.deltaTime;
        
 
@@ -91,13 +91,10 @@ public class Enemy : MonoBehaviour, IDamage
 
     void checkRoam()
     {
-        if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime && !isPlayingSteps)
+        if (agent.remainingDistance < 0.01f && roamTimer >= roamPauseTime)
         {
             roam();
-            StartCoroutine(playSteps());
         }
-         else
-            isPlayingSteps = false;
     }
 
     void locoAnim()
@@ -106,8 +103,6 @@ public class Enemy : MonoBehaviour, IDamage
         float agentSpeedAnim = anim.GetFloat("Speed");
 
         anim.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, agentSpeedCurrent, Time.deltaTime * AnimationTransitionSpeed));
-       
-        
     }
 
     void roam()
@@ -122,6 +117,7 @@ public class Enemy : MonoBehaviour, IDamage
         NavMeshHit hit;
         NavMesh.SamplePosition(randPos, out hit, roamDistance, 1);
         agent.SetDestination(hit.position);
+        
     }
 
     private void FaceTarget()
@@ -179,15 +175,9 @@ public class Enemy : MonoBehaviour, IDamage
                 {
                     FaceTarget();
                 }
-                if (shootTimer >= shootRate)
+                if (shootTimer >= shootRate && shootPos != null)
                 {
-                    //shootTimer = 0f;
-                    if (shootPos != null)
-                    {
-                        //  Instantiate(bulletPrefab, shootPos.position, shootPos.rotation);
                         shoot();
-                    }
-
                 }
                 agent.stoppingDistance = originalStoppingDistance;
                 return true;
@@ -198,6 +188,15 @@ public class Enemy : MonoBehaviour, IDamage
         return false;
     }
 
+    void handleFootsteps()
+    {
+        float speed = agent.velocity.magnitude;
+
+        if (speed > 0.1f && !isPlayingSteps)
+        {
+            StartCoroutine(playEnemySteps());
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -215,15 +214,6 @@ public class Enemy : MonoBehaviour, IDamage
         }
         agent.stoppingDistance = 0;
     }
-
-    //private void OnTriggerStay(Collider other)
-    //{
-    //if (other.CompareTag("Player") && playerInTrigger && CanSeePlayer())
-    //{
-    //    // Enemy sees player → can shoot aggressively
-    //    // Add attack logic here if desired
-    //} commented out to improve enemyAI
-    //}
     void shoot()
     {
         shootTimer = 0;
@@ -232,8 +222,7 @@ public class Enemy : MonoBehaviour, IDamage
             Instantiate(bulletPrefab, shootPos.position, transform.rotation);
             anim.SetTrigger("Attack");
         }
-
-        if (!isMeleeAttacking && distanceToPlayer <= 2f)
+        else if (!isMeleeAttacking && distanceToPlayer <= 2f)
         {
             StartCoroutine(melee());
             anim.SetTrigger("Attack");
@@ -259,19 +248,14 @@ public class Enemy : MonoBehaviour, IDamage
         }
 
 
-    IEnumerator playSteps()
+    IEnumerator playEnemySteps()
     {
         isPlayingSteps = true;
         aud.PlayOneShot(audSteps[Random.Range(0, audSteps.Length)], audStepsVol);
 
-        if (isSprinting)
-        {
-            yield return new WaitForSeconds(0.3f);
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
+    
+        yield return new WaitForSeconds(0.25f);
+        
         isPlayingSteps = false;
     }
 }

@@ -15,7 +15,7 @@ public class PickUpWeapon : MonoBehaviour
             Weapon.currentAmmo = Weapon.MaxAmmo;
             pick.getWeaponStats(Weapon);
             StartCoroutine(PickPop());
-            
+            Destroy(gameObject);
         }
     }
 
